@@ -1,0 +1,2110 @@
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import ReactImageMagnify from 'react-image-magnify';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { SERVER_API_URL } from '../../server/server';
+import { SERVER_URL } from '../../server/server';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios'; // Import Axios
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+
+import { GlobleInfo } from '../../App';
+import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
+import { FaFolderOpen, FaFileImage } from "react-icons/fa";
+import { MdLocalOffer } from "react-icons/md";
+import { jwtDecode } from "jwt-decode";
+// import tdesign from '../../Assets/images/tdesign_cart.png';
+import { ColorRing } from 'react-loader-spinner';
+import { IoShareSocialOutline } from "react-icons/io5";
+import { IoMdLocate } from "react-icons/io";
+import forword from '../../Assets/images/forword.png';
+import backword from '../../Assets/images/backword.png';
+import { IoClose } from 'react-icons/io5';
+
+import { MdKeyboardArrowLeft } from "react-icons/md";
+import { MdKeyboardArrowRight } from "react-icons/md";
+
+import { FaFacebookF, FaTwitter, FaEnvelope, FaWhatsapp } from 'react-icons/fa';
+import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import wishlist from '../../Assets/images/wishlist.svg'
+import wishlist1 from '../../Assets/images/wishlist1.svg'
+import men_image from '../../Assets/images/men-image.png';
+import men_image2 from '../../Assets/images/men-image2.png';
+
+import "./index.css";
+import Header from "../../components/Header";
+import FaqPage from '../../screens/FaqPage'
+import Footer from "../../components/Footer";
+
+const reviews = [
+  { id: 1, user: "Rahul Mehra", comment: "Stylish and comfortable. Perfect for daily wear!", date: "22 Mar 2025", rating: 5 },
+  { id: 2, user: "Pooja Sharma", comment: "Loved the design. Good quality at a great price.", date: "14 Mar 2025", rating: 4 },
+  { id: 3, user: "Ankit Verma", comment: "Awesome product, fits well and looks classy.", date: "13 Mar 2025", rating: 5 },
+  { id: 4, user: "Neha Joshi", comment: "Chic and trendy. Great buy for the summer.", date: "22 Mar 2025", rating: 4 },
+  { id: 5, user: "Ravi Patel", comment: "Value for money. Highly recommended!", date: "03 Apr 2025", rating: 5 },
+  { id: 6, user: "Sneha Nair", comment: "Lens quality is impressive and stylish too.", date: "17 Mar 2025", rating: 4 },
+  { id: 7, user: "Karan Singh", comment: "Looks premium and feels lightweight.", date: "18 Mar 2025", rating: 5 },
+  { id: 8, user: "Anjali Desai", comment: "Glamorous look, got many compliments!", date: "06 Mar 2025", rating: 4 },
+  { id: 9, user: "Mohit Sinha", comment: "Perfect for driving and daily use.", date: "02 Apr 2025", rating: 5 },
+  { id: 10, user: "Ritika Kapoor", comment: "Very comfortable and trendy.", date: "19 Mar 2025", rating: 4 },
+  { id: 11, user: "Aman Chaudhary", comment: "Super stylish. Worth every penny!", date: "11 Mar 2025", rating: 5 },
+  { id: 12, user: "Kavita Reddy", comment: "Nice frame and UV protection is good.", date: "28 Mar 2025", rating: 4 },
+  { id: 13, user: "Vikram Shetty", comment: "Exactly as shown in pictures. Great product!", date: "08 Mar 2025", rating: 5 },
+  { id: 14, user: "Priya Malhotra", comment: "Very classy. Loved the packaging too.", date: "04 Apr 2025", rating: 4 },
+  { id: 15, user: "Rohit Yadav", comment: "Perfect fit and finish. Highly satisfied.", date: "25 Mar 2025", rating: 5 },
+  { id: 16, user: "Isha Bansal", comment: "Stylish and light on the nose.", date: "12 Mar 2025", rating: 4 },
+  { id: 17, user: "Nikhil Rathi", comment: "Impressive build quality. Looks elegant.", date: "21 Mar 2025", rating: 5 },
+  { id: 18, user: "Megha Jain", comment: "Trendy design. Great for photos!", date: "16 Mar 2025", rating: 4 },
+  { id: 19, user: "Abhishek Tiwari", comment: "Very durable and stylish sunglasses.", date: "27 Mar 2025", rating: 5 },
+  { id: 20, user: "Sanya Gupta", comment: "Good for both casual and formal outfits.", date: "10 Mar 2025", rating: 4 },
+  { id: 21, user: "Devansh Mishra", comment: "Superb product. Would buy again!", date: "26 Mar 2025", rating: 5 },
+  { id: 22, user: "Divya Iyer", comment: "Really loved the gradient lens.", date: "31 Mar 2025", rating: 4 },
+  { id: 23, user: "Manish Khurana", comment: "Amazing clarity and a cool look!", date: "09 Mar 2025", rating: 5 },
+  { id: 24, user: "Aarti Saxena", comment: "Lovely shape and finish. Happy with it.", date: "01 Apr 2025", rating: 4 },
+  { id: 25, user: "Saurav Ghosh", comment: "Comfortable and stylish. Perfect for outings.", date: "30 Mar 2025", rating: 5 },
+  { id: 26, user: "Naina Thakur", comment: "Quality product. Totally worth it.", date: "07 Mar 2025", rating: 4 },
+  { id: 27, user: "Yash Rajput", comment: "Looks exactly like the image. Awesome!", date: "23 Mar 2025", rating: 5 },
+  { id: 28, user: "Harshita Bhatt", comment: "Lightweight and modern design. Loved it!", date: "20 Mar 2025", rating: 4 },
+  { id: 29, user: "Rajeev Nambiar", comment: "Trendy and durable. 10/10.", date: "24 Mar 2025", rating: 5 },
+  { id: 30, user: "Tanvi Agarwal", comment: "Simple, elegant, and functional.", date: "15 Mar 2025", rating: 4 },
+  { id: 31, user: "Arjun Bhatia", comment: "Cool shades. Perfect gift item.", date: "29 Mar 2025", rating: 5 },
+  { id: 32, user: "Shruti Vyas", comment: "Design is sleek and fashionable.", date: "05 Mar 2025", rating: 4 },
+  { id: 33, user: "Yuvraj Dutta", comment: "Great purchase. Looks and feels premium.", date: "13 Mar 2025", rating: 5 },
+  { id: 34, user: "Simran Lamba", comment: "Stylish pair. Fits my face well.", date: "18 Mar 2025", rating: 4 },
+  { id: 35, user: "Tushar Chauhan", comment: "Lenses are perfect for outdoor activities.", date: "17 Mar 2025", rating: 5 },
+  { id: 36, user: "Ira Sen", comment: "Very fashionable and a good fit.", date: "01 Mar 2025", rating: 4 },
+  { id: 37, user: "Aditya Kulkarni", comment: "These sunglasses are next level!", date: "02 Mar 2025", rating: 5 },
+  { id: 38, user: "Lavanya Rao", comment: "Great lens clarity and beautiful frame.", date: "07 Mar 2025", rating: 4 },
+  { id: 39, user: "Kunal Dey", comment: "Best sunglasses I’ve owned so far.", date: "26 Mar 2025", rating: 5 },
+  { id: 40, user: "Rashmi Pathak", comment: "Comfortable and stylish, great for summer!", date: "28 Mar 2025", rating: 4 },
+  { id: 41, user: "Siddharth Naik", comment: "Superb finish and very light to wear.", date: "04 Mar 2025", rating: 5 },
+  { id: 42, user: "Alisha Kohli", comment: "Perfect match with ethnic and western wear.", date: "03 Mar 2025", rating: 4 },
+  { id: 43, user: "Jayant Rana", comment: "Elegant design and solid build quality.", date: "12 Mar 2025", rating: 5 },
+  { id: 44, user: "Bhavya Chauhan", comment: "Good coverage and very sleek design.", date: "27 Mar 2025", rating: 4 },
+  { id: 45, user: "Aarav Jain", comment: "Looks stylish and gives full sun protection.", date: "30 Mar 2025", rating: 5 }
+];
+
+
+const lensData = {
+  Plano: [
+    { type: "Blue Block", price: 800 },
+    { type: "Photo CR", price: 1800 },
+    { type: "Tinteble", price: 1200 }
+  ],
+  SingleVision: [
+    { type: "Blue Block", price: 800 },
+    { type: "Photo CR", price: 1800 },
+    { type: "Tinteble", price: 1200 }
+  ],
+  Bifocal: [
+    { type: "Arc", price: 1500 },
+    { type: "Blue Block", price: 1800 },
+    { type: "Photo CR", price: 1800 },
+    { type: "Drivex", price: 3200 }
+  ],
+  Progressive: [
+    { type: "Arc", price: 2500 },
+    { type: "Blue Block", price: 2800 },
+    { type: "Photo CR", price: 3600 },
+    { type: "Drivex", price: 4000 }
+  ]
+}
+
+const ProductDetails = () => {
+  const history = useNavigate();
+  const { cetegory, product_id } = useParams();
+  const [mobile_num, setMobile_num] = useState("");
+  const { saveCheckoutData, updateCounts, getCart, cartListItems } = useContext(GlobleInfo)
+  const [item, setItems] = useState({});
+  const [suggProd, setSuggProd] = useState({});
+
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+
+  const [selectedPopImage, setSelectedPopImage] = useState(null);
+  const [videoUrlPop, setVideoUrlPop] = useState("");
+
+  const [showPowerPopup, setShowPowerPopup] = useState(false);
+  const [showPopupContainer, setShowPopupContainer] = useState(true);
+  const [showPopuplensePrice, setShowPopuplensePrice] = useState(false);
+  const [selectLansType, setSelectLansType] = useState('')
+  const [selectedLens, setSelectedLens] = useState({ type: '', price: '' });
+  const [leftLens, setLeftLens] = useState({ SPH: "-0.00", CYL: "-0.25" });
+  const [rightLens, setRightLens] = useState({ SPH: "-0.00", CYL: "-0.25" });
+  const [add, setAdd] = useState('')
+  const [axis, setAxis] = useState('')
+  const [showAll, setShowAll] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(null); // State for selected color
+
+  const [showSharePopup, setShowSharePopup] = useState(false);
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const shareUrl = `${SERVER_URL}/product-item/${product_id}`;
+  const [copied, setCopied] = useState(false);
+  const [wishlistItems, setWishlistItems] = useState([]);
+
+  const [mapDisplayAddress, setMapDisplayAddress] = useState(null);
+  const [productQuntity, setProductQuntity] = useState(1);
+
+  const [selectedId, setSelectedId] = useState(null);
+  const rattingAndReview = useRef(null);
+  const scrollRef = useRef(null);
+  const thumbRowRef = useRef(null);
+
+  const [showBargain, setShowBargain] = useState(false);
+  const [offerPrice, setOfferPrice] = useState("");
+
+  const [bargainLoading, setBargainLoading] = useState(false);
+  const [bargainMessage, setBargainMessage] = useState("");
+  const [bargainResult, setBargainResult] = useState(null);
+  const [acceptedPrice, setAcceptedPrice] = useState(null);
+
+  const [prescription, setPrescription] = useState(null);
+  const [prescriptionPreview, setPrescriptionPreview] = useState(null);
+
+  console.log("productQuntity", productQuntity)
+  console.log("selectedColor", selectedColor)
+
+  // Decoded Mobile Number
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // Replace 'yourTokenKey' with your actual token key
+    if (token) {
+      // Decode the token to get user information
+      const decodedToken = jwtDecode(token);
+      const mobile_num = decodedToken.mobile_num;
+      setMobile_num(mobile_num)
+      // console.log("Decoded Mobile Number:", mobile_num);
+    }
+  }, [product_id]);
+
+  // getallUserinfo
+  useEffect(() => {
+    const fetchAddress = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Token is missing.");
+          return;
+        }
+
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const response = await axios.get(`${SERVER_API_URL}/getallUserinfo`, config);
+        const data = response.data;
+
+        console.log("Full API response:", data);
+
+        // Ensure mobile_num is defined
+        if (!mobile_num) {
+          console.error("mobile_num is not defined.");
+          return;
+        }
+
+        const dataAddress = data.filter(
+          (user) => String(user.mobile_num) === String(mobile_num)
+        );
+
+        if (dataAddress.length > 0) {
+          const selected = dataAddress[0];
+          setMapDisplayAddress(`${selected.city}, ${selected.state}, ${selected.pincode}`);
+        }
+
+      } catch (error) {
+        console.error("Error fetching address info:", error);
+      }
+    };
+
+    fetchAddress();
+  }, [item]); // Add dependencies here if needed
+
+  // scrollToSection
+  const scrollToSection = (ref) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Function to handle sharing
+  const handleShare = (platform) => {
+    let url = "";
+
+    switch (platform) {
+      case "facebook":
+        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+        break;
+      case "twitter":
+        url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(item?.result?.product_name)}`;
+        break;
+      case "email":
+        url = `mailto:?subject=Check out this product&body=${encodeURIComponent(shareUrl)}`;
+        break;
+      case "whatsapp":
+        url = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareUrl)}`;
+        break;
+      default:
+        break;
+    }
+
+    if (url) {
+      window.open(url, "_blank");
+    }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); // Reset text after 2 seconds
+  };
+
+  const handleSubmit = () => {
+    if (selectLansType) {
+      const power = {
+        selectLansType,
+        selectedLensOrProducrPrice: selectedLens.price + product_price,
+        selectedType: selectedLens.type,
+        leftLens,
+        rightLens,
+        axis,
+        add,
+      };
+      const product = {
+        mobile_number: mobile_num,
+        selectedColor: selectedColor,
+        product_id: product_id,
+        main_category: cetegory
+      }
+
+      // Save the data to context
+      saveCheckoutData({ power, product });
+
+      // Navigate to the checkout page
+      history('/ChekOutPage')
+    } else {
+      alert("Please select valid options.");
+    }
+  };
+
+  const handleOpenGoogleMap = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token is missing.");
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get("http://localhost:8000/getallUserinfo", config);
+      const data = response.data;
+
+      console.log("Full API response:", data);
+
+      // Ensure mobile_num is defined
+      if (!mobile_num) {
+        console.error("mobile_num is not defined.");
+        return;
+      }
+
+      const dataAddress = data.filter((user) =>
+        String(user.mobile_num) === String(mobile_num)
+      )
+
+      console.log("dataAddress", dataAddress);
+      // const firstItem = dataAddress[0];
+      // console.log(firstItem.city); // "parsa"
+
+
+      if (dataAddress.length > 0) {
+        const selected = dataAddress[0];
+        const address = `${selected.city}, ${selected.state}`;
+        const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+        window.open(googleMapsUrl, "_blank");
+      } else {
+        console.error("No address found for this mobile number.");
+      }
+    } catch (error) {
+      console.error("Error fetching address info:", error);
+    }
+  };
+
+  // ADD TO CART
+  const handleAddCart = async () => {
+    try {
+      const token = JSON.parse(
+        localStorage.getItem("user_token")
+      );
+
+      if (!token) {
+        alert("Please login first");
+        history('/login', { replace: true });
+        return;
+      }
+
+      const power = {
+        selectLansType: selectLansType || null,
+        selectedType: selectedLens?.type || null,
+        leftLens: leftLens || null,
+        rightLens: rightLens || null,
+        axis: axis || null,
+        add: add || null,
+        selectedLensOrProducrPrice: (selectedLens?.price || 0) + product_price,
+      };
+
+      const productDetails = {
+        mobile_number: mobile_num,
+        product_id: product_id,
+        main_category: cetegory,
+        productQuntity: productQuntity || 1,
+        image: item?.thumbnail_url,
+      };
+
+      const formData = new FormData();
+
+      formData.append("power", JSON.stringify(power));
+
+      formData.append("productDetails", JSON.stringify(productDetails));
+
+      // 🔥 DIRECT FILE
+      if (prescription) {
+        formData.append("prescription", prescription);
+      }
+
+      // console.log("power", power);
+      // console.log("image", item?.result?.product_thumnail_img);
+      // console.log("productDetails", productDetails);
+      // console.log("prescription", prescription);
+
+      const response = await axios.post("http://localhost:8000/api/addCart", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        await getCart();
+        toast.success("Product added to cart successfully!");
+      }
+
+      console.log("Add Cart Response:", response.data);
+
+    } catch (error) {
+      console.error(
+        "Add Cart Error:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  // Image select
+  const handleImageChange = (e) => {
+    const selectedImage = e.target.files[0];
+
+    if (!selectedImage) return;
+
+    setPrescription(selectedImage);
+
+    const previewUrl = URL.createObjectURL(selectedImage);
+    setPrescriptionPreview(previewUrl);
+
+  };
+
+  // HANDLE POWER
+  const getPowerDetails = (productId) => {
+    const powerItems = cartListItems.filter((cartItem) => {
+
+      // Product ID match
+      const productMatch =
+        String(cartItem.product_id) === String(productId);
+
+      // Main category null ya eyewear honi chahiye
+      const categoryMatch =
+        cartItem.main_category === null ||
+        cartItem.main_category?.toLowerCase() === "eyewear";
+
+      // Lens type aur lens name dono me value honi chahiye
+      const lensTypeExists =
+        cartItem.lens_type !== null &&
+        cartItem.lens_type !== undefined &&
+        cartItem.lens_type !== "";
+
+      const lensNameExists =
+        cartItem.lens_name !== null &&
+        cartItem.lens_name !== undefined &&
+        cartItem.lens_name !== "";
+
+      return (
+        productMatch &&
+        categoryMatch &&
+        lensTypeExists &&
+        lensNameExists
+      );
+    });
+
+    // Har matching cart item ka power data return
+    return powerItems.map((cartItem) => ({
+      cart_id: cartItem.cart_id,
+      product_id: cartItem.product_id,
+
+      lens_type: cartItem.lens_type || "",
+      lens_name: cartItem.lens_name || "",
+
+      left_sph: cartItem.left_sph || "",
+      left_cyl: cartItem.left_cyl || "",
+
+      right_sph: cartItem.right_sph || "",
+      right_cyl: cartItem.right_cyl || "",
+
+      axis: cartItem.axis || "",
+      add: cartItem.add || "",
+
+      price: cartItem.price || "",
+      prescription_image: cartItem.prescription || "",
+      prescription: cartItem.prescription ? cartItem.prescription.split("/").pop().replace(/^\d+-/, "") : "",
+    }));
+  };
+
+  // Check Bargain Offer
+  const checkBargainOffer = async () => {
+    console.log("product_id:", product_id);
+    console.log("offerPrice1:", offerPrice);
+    if (!offerPrice) {
+      alert("Please enter your offer price");
+      return;
+    }
+
+    try {
+      setBargainLoading(true);
+      setBargainMessage("");
+      setBargainResult(null);
+
+      const user_token = JSON.parse(localStorage.getItem("user_token"));
+
+      if (!user_token) {
+        alert("User token not found. Please login again");
+        return;
+      }
+
+      const response = await axios.post(`${SERVER_API_URL}/api/check`, {
+        product_id: product_id,
+        main_category: cetegory,
+        offer_price: Number(offerPrice)
+      },
+        {
+          headers: {
+            Authorization: `Bearer ${user_token}`
+          }
+        }
+      );
+
+      const data = response.data;
+
+      console.log("Bargain Response:", data);
+
+      setBargainResult(data);
+      setBargainMessage(data.message);
+
+      // Offer accepted
+      if (data.result === "accepted") {
+        setAcceptedPrice(
+          Number(data.offered_price)
+        );
+
+        // Optional: modal close
+        // setShowBargain(false);
+      }
+
+    } catch (error) {
+      console.log(
+        "Bargain API Error:",
+        error.response?.data
+      );
+
+      const errorData = error.response?.data;
+
+      // Backend se rejected response aaya
+      if (errorData?.result === "rejected") {
+        setBargainResult(errorData);
+
+        setBargainMessage(
+          errorData.message ||
+          "Your offer was rejected"
+        );
+
+        return;
+      }
+
+      // Attempt limit
+      if (errorData?.result === "limit_reached") {
+        setBargainResult(errorData);
+
+        setBargainMessage(
+          errorData.message ||
+          "Bargain attempt limit reached"
+        );
+
+        return;
+      }
+
+      // Other API errors
+      setBargainResult({
+        result: "failed"
+      });
+
+      setBargainMessage(
+        errorData?.message ||
+        "Bargain request failed"
+      );
+
+    } finally {
+      setBargainLoading(false);
+    }
+  };
+
+  const handleDirectPayment = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      history('/login', { replace: true });
+      return;
+    }
+
+    if (product_price, mobile_num, product_id, productQuntity) {
+      const power = {
+        selectedLensOrProducrPrice: product_price,
+      }
+      const product = {
+        mobile_number: mobile_num,
+        selectedColor: selectedColor,
+        product_id: product_id,
+        main_category: cetegory,
+        productQuntity: productQuntity
+      }
+      // Save the data to context
+      saveCheckoutData({ power, product });
+
+      // Navigate to the checkout page
+      history('/ChekOutPage')
+    } else {
+      alert("Please select valid options.");
+    }
+
+  }
+
+  // scrooling featers impliment
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = 150; // adjust as needed
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const handleScroll = (direction) => {
+    if (thumbRowRef.current) {
+      const scrollAmount = 200; // adjust as needed
+      thumbRowRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+  // End scrooling featers impliment
+
+  const handlePowerClick = () => {
+    const token = localStorage.getItem('token'); // Replace 'yourTokenKey' with your actual token key
+    if (!token) {
+      console.error('User details not found.');
+      history('/login', { replace: true })
+      return;
+    }
+    setShowPowerPopup(!showPowerPopup);
+  };
+
+
+  const handleLanseClick = (type) => {
+    setSelectLansType(type);
+    setShowPopupContainer(false)
+    setShowPopuplensePrice(true)
+  };
+
+  // Function to show the popup and set the lens type and price
+  const showPawerPopup = (lensType, lensPrice) => {
+    setShowPopuplensePrice(false)
+    setSelectedLens({ type: lensType, price: lensPrice });
+  };
+
+  const handleLensChange = (lens, field, value) => {
+    if (lens === 'left') {
+      setLeftLens((prev) => ({ ...prev, [field]: value }));
+    } else {
+      setRightLens((prev) => ({ ...prev, [field]: value }));
+    }
+  };
+
+  const handleChangeAdd = (field, value) => {
+    if (field === 'ADD') {
+      setAdd(parseFloat(value));
+    }
+  };
+
+  const handleChangeAxis = (field, value) => {
+    if (field === 'AXIS') {
+      setAxis(parseFloat(value));
+    }
+  };
+
+
+
+  // Run effect whenever wishlistItems updates
+  useEffect(() => {
+    const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setWishlistItems(storedWishlist);
+  }, []); // ✅ Add wishlistItems as dependency
+
+  // toggleWishlist
+  const toggleWishlist = (product) => {
+    setWishlistItems((prevWishlist) => {
+      let updatedWishlist = [...prevWishlist];
+      const index = updatedWishlist.findIndex(item => item.product_id === product.product_id);
+
+      if (index !== -1) {
+        updatedWishlist.splice(index, 1); // Remove if exists
+      } else {
+        updatedWishlist.push(product); // Add if not exists
+      }
+
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+      updateCounts(); // Update count globally
+      return updatedWishlist;
+    });
+    // ✅ Use window.location.reload() to bypass ESLint restriction
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
+  };
+
+  // fetch product by id
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${SERVER_API_URL}/api/product/${cetegory}/${product_id}`
+        );
+        console.log("details new", response.data.data);
+        setItems(response.data.data);
+        setSuggProd(response.data.suggestedProducts)
+
+        const frameColor = response.data.data?.color;
+        const lensColor = response.data.data?.color;
+
+        handleColorSelect(frameColor, lensColor);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    setSelectedImage(null);
+  }, [product_id]);
+
+  const handleColorSelect = (frameColor, lensColor) => {
+    setSelectedColor({
+      frameColor,
+      lensColor
+    });
+  };
+
+
+  useEffect(() => {
+    const fetchData1 = async () => {
+      try {
+        const response = await axios.get(`${SERVER_API_URL}/api/allCetegory`);
+        const products = response.data.data;
+        setAllProducts(products);
+        console.log("allCetegory", products)
+
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+    fetchData1();
+  }, [product_id]);
+
+  const getColorsForProduct = (same_color_type, main_category) => {
+    // ✅ Ensure allProducts.result is an array before filtering
+    const productsArray = Array.isArray(allProducts) ? allProducts : [];
+
+    // Filter products that match the same title
+    const matchingProducts = productsArray.filter(p => p.same_color_type === same_color_type && p.main_category === main_category);
+
+    // Extract frame and lens colors
+    const colors = matchingProducts.map(p => ({
+      productId: p.product_id,  // ✅ Include product ID
+      frameColor: p.frameColor || "#FFFFFF", // Default White if null
+      lensColor: p.lenshColor || "#000000",  // Default Black if null
+      thumbnail_url: p.thumbnail_url,
+      product_title: p.product_title,
+      product_price: p.product_price,
+      discount: p.discount,
+      highlights: p.highlights,
+      gender: p.gender,
+
+      main_category: p.main_category || "",
+      description: p.description || "",
+      price: p.price || 0,
+      discount_percent: p.discount_percent || 0,
+      sub_category: p.sub_category || "N/A",
+    }));
+
+    return colors;
+  };
+  // console.log("item new", item)
+  // console.log("wishlist", wishlistItems)
+  // console.log("item?.result?", item?.result?.product_id)
+
+  // for main product image
+  const handleImageClick = (imageSrc) => {
+    setSelectedImage(imageSrc);
+    setVideoUrl("")
+  };
+
+  // for popup product image
+  const handlePopImageClick = (imageSrc) => {
+    setSelectedPopImage(imageSrc);
+    setVideoUrlPop("")
+  };
+
+  // for main product image
+  const handleVideoClick = (videoSrc) => {
+    setVideoUrl(videoSrc);
+  };
+
+  // for popup product image
+  const handleVideoClickPop = (videoSrc) => {
+    setVideoUrlPop(videoSrc);
+  };
+
+  // for main product image
+  const images = item?.images || [];
+
+  // for popup product image
+  const popupNextbtn = () => {
+    const nextIndex = (currentIndex + 1) % images.length;
+    setCurrentIndex(nextIndex);
+    setSelectedPopImage(`${SERVER_API_URL}/${images[nextIndex]}`);
+  }
+
+  const popupPrevbtn = () => {
+    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    setCurrentIndex(prevIndex);
+    setSelectedPopImage(`${SERVER_API_URL}/${images[prevIndex]}`);
+  }
+
+  const handleImageClickPopup = (index) => {
+    setCurrentIndex(index);
+    setSelectedPopImage(`${SERVER_API_URL}/${images[index]}`);
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
+
+  const handleNext = () => {
+    const nextIndex = (currentIndex + 1) % images.length;
+    setCurrentIndex(nextIndex);
+    setSelectedImage(`${SERVER_API_URL}/${images[nextIndex]}`);
+  };
+
+  const handlePrev = () => {
+    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    setCurrentIndex(prevIndex);
+    setSelectedImage(`${SERVER_API_URL}/${images[prevIndex]}`);
+  };
+
+  const raw_price = ((item?.price - (item?.price * item?.discount_percent / 100)) * productQuntity);
+  const product_price = Math.round(raw_price);
+
+  console.log("item", item)
+  console.log("product_price", product_price)
+  return (
+    <>
+      <Header />
+      <ToastContainer position="top-right" autoClose={4000} />
+      {loading ? (
+        <ColorRing
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="blocks-loading"
+          wrapperStyle={{}}
+          wrapperClass="blocks-wrapper"
+          colors={['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#845EC2']}
+        />
+      ) : (
+        <div className="product-details-container">
+          <div className='product-details-container-row'>
+            <div className='product-details-child-left'>
+              {/* Breadcrumb */}
+              <div className="main-content">
+                {/* Main Product Image Section */}
+                <div className="product-image-section">
+                  <div className="main-image">
+                    <div className='share-container'>
+                      {wishlistItems.some(item1 => item1.product_id === item?.product_id) ? (
+                        <img src={wishlist} alt="wishlist" className='share-icon' onClick={() => toggleWishlist(item)} />
+                      ) : (
+                        <img src={wishlist1} alt="wishlist" className='share-icon' onClick={() => toggleWishlist(item)} />
+                      )}
+                      <IoShareSocialOutline className='share-icon' onClick={() => setShowSharePopup(true)} />
+                    </div>
+
+                    {/* ====== Popup Share Modal ====== */}
+                    {showSharePopup && (
+                      <div className="share-popup-overlay">
+                        <div className="share-popup">
+                          <button className="close-btn" onClick={() => setShowSharePopup(false)}>
+                            <IoClose />
+                          </button>
+                          <h3>Share this Product</h3>
+                          <div className="share-product-info">
+                            <img src={`${SERVER_API_URL}/${item?.result?.product_thumnail_img}`} alt="avioter" className="share-product-img" />
+                            <div className="share-product-text">
+                              <p className="share-brand">{item?.result?.product_title}</p>
+                              <p className="share-title">{item?.result?.highlights}</p>
+                            </div>
+                          </div>
+
+                          <div className='copy-container'>
+                            <input type="text" value={shareUrl} readOnly className="share-link" />
+                            {/* <button className="copy-btn" onClick={() => navigator.clipboard.writeText(shareUrl)}>COPY</button> */}
+                            <button
+                              className={`copy-btn ${copied ? "copied" : ""}`}
+                              onClick={handleCopy}
+                            >
+                              {copied ? "Copied!" : "Copy"}
+                            </button>
+                          </div>
+
+                          <div className="share-icons">
+                            <FaFacebookF className="social-icon" onClick={() => handleShare("facebook")} />
+                            <FaTwitter className="social-icon" onClick={() => handleShare("twitter")} />
+                            <FaEnvelope className="social-icon" onClick={() => handleShare("email")} />
+                            <FaWhatsapp className="social-icon" onClick={() => handleShare("whatsapp")} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <button
+                      // onClick={() => scroll('left')}
+                      onClick={() => handlePrev()}
+                      className="scroll-btn-main-image prev-btn-thumb"
+                    >
+                      <MdKeyboardArrowLeft size={25} />
+                    </button>
+
+                    {videoUrl === "" ? (
+                      <img className='larg-image' src={selectedImage ? selectedImage : `${SERVER_API_URL}/${item?.thumbnail_url}`} alt={`Large Image`} onClick={() => handleImageClickPopup(0)} />
+                    ) : (
+                      <video controls autoPlay className="product-video-container">
+                        <source src={videoUrl} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                      // null
+                    )}
+
+                    {/* Next Button */}
+                    <button
+                      // onClick={() => scroll('right')}
+                      onClick={() => handleNext()}
+                      className="scroll-btn-main-image next-btn-thumb"
+                    >
+                      <MdKeyboardArrowRight size={25} />
+                    </button>
+
+                  </div>
+
+                  {/* ====== Popup Modal Product ====== */}
+                  {isPopupOpen && (
+                    <div className="image-popup-overlay">
+                      <div className='popup-background'>
+                        <span className="close-btn" style={{ fontSize: "30px" }} onClick={() => {
+                          closePopup();
+                          setVideoUrl("");
+                        }}>&times;</span>
+                        <div className="image-popup">
+                          <button className="prev-btn1" onClick={popupPrevbtn}><img className='forword-btn' src={backword} alt="forword-btn" /></button>
+                          {videoUrlPop === "" ? (
+                            <ReactImageMagnify
+                              {...{
+                                smallImage: {
+                                  alt: "Popup Large View",
+                                  src: selectedPopImage,
+                                  isFluidWidth: false,
+                                  width: 460,
+                                  height: 440,
+                                },
+                                largeImage: {
+                                  src: selectedPopImage,
+                                  // width: 800,  
+                                  // height: 800, 
+                                  width: 1200,
+                                  height: 1600,
+                                },
+                                lensStyle: { backgroundColor: "rgba(0,0,0,.3)" },
+                                enlargedImageContainerStyle: { zIndex: 1500 }, // ensures zoom shows above popup
+                                isHintEnabled: true,
+                                enlargedImageContainerStyle: {
+                                  zIndex: 1500,
+                                  background: "#fff",
+                                  // marginTop: "-40px",
+                                },
+                                // enlargedImageContainerDimensions: {
+                                //     width: '900',   
+                                //     height: '900'  
+                                // },
+                                // lensStyle: { backgroundColor: "rgba(255,255,255,0.3)", border: "1px solid #000" },
+
+                              }}
+                            />
+                          ) : (
+                            <video controls autoPlay className="product-video-container" style={{ width: "100%", height: "60vh" }}>
+                              <source src={videoUrlPop} type="video/mp4" />
+                              Your browser does not support the video tag.
+                            </video>
+                          )}
+
+
+                          <button className="next-btn1" onClick={popupNextbtn}><img className='forword-btn' src={forword} alt="forword-btn" /></button>
+                        </div>
+
+                        <div className='button-thmb-row'>
+                          <button className='popup-btn' onClick={() => handleScroll('rigth')} style={{ background: "transparent", border: "none", fontSize: "20px" }}><IoIosArrowBack color='#000' /></button>
+
+                          <div className="thumbnail-row" ref={thumbRowRef} style={{ justifyContent: "space-around" }}>
+                            {item && item.images && (
+                              <>
+                                {/* Conditional Video Thumbnail Rendering */}
+                                {item?.video_thumbnail_url &&
+                                  item?.video_thumbnail_url !== "" &&
+                                  item?.video_thumbnail_url !== "undefined" && (
+                                    <div className="thumbnail">
+                                      <img
+                                        className={`mini-image modified-mini-image ${selectedThumbnail === 'video' ? 'active-thumbnail-pop' : ''
+                                          }`}
+                                        src={`${SERVER_API_URL}/${item.video_thumbnail_url}`}
+                                        alt="Video Thumbnail"
+                                        onMouseEnter={() => {
+                                          handleVideoClickPop(`${SERVER_API_URL}/${item.video_url}`);
+                                          setSelectedThumbnail('video');
+                                        }}
+                                      />
+                                    </div>
+                                  )}
+
+
+                                {item.images.map((img, index) => (
+                                  <div className="thumbnail" key={index}>
+                                    <img
+                                      className={`mini-image ${selectedThumbnail === index ? 'active-thumbnail-pop' : ''
+                                        }`}
+                                      src={`${SERVER_API_URL}/${img}`}
+                                      alt={`ImageItem ${product_id}_${index + 1}`}
+                                      onMouseEnter={() => {
+                                        handlePopImageClick(`${SERVER_API_URL}/${img}`);
+                                        setSelectedThumbnail(index);
+                                      }}
+                                    />
+                                  </div>
+                                ))}
+                              </>
+                            )}
+                          </div>
+
+                          <button className="popup-btn" style={{ background: "transparent", border: "none", fontSize: "20px" }} onClick={() => handleScroll('left')}><IoIosArrowForward color='#000' /></button>
+                        </div>
+
+                      </div>
+                    </div>
+                  )}
+                  {/* ====== Popup Modal Product ====== */}
+
+                  {/* ====== Product ====== */}
+                  <div className="thumbnail-container">
+                    {/* Prev Button */}
+                    <button
+                      onClick={() => scroll('left')}
+                      className="scroll-btn-thumb prev-btn-thumb"
+                    >
+                      <MdKeyboardArrowLeft size={25} />
+                    </button>
+
+                    <div className="thumbnail-row" ref={scrollRef}>
+                      {item && item.images && (
+                        <>
+                          {/* Conditional Video Thumbnail Rendering */}
+                          {item?.video_thumbnail_url &&
+                            item?.video_thumbnail_url !== "" &&
+                            item?.video_thumbnail_url !== "undefined" && (
+                              <div className="thumbnail modified-thumbnail">
+                                <img
+                                  className={`thumbnail modified-thumbnail ${selectedThumbnail === 'video' ? 'active-thumbnail' : ''
+                                    }`}
+                                  src={`${SERVER_API_URL}/${item.video_thumbnail_url}`}
+                                  alt="Video Thumbnail"
+                                  onMouseEnter={() => {
+                                    setSelectedThumbnail('video');
+                                    handleVideoClick(`${SERVER_API_URL}/${item.video_url}`)
+                                  }}
+                                />
+                              </div>
+                            )}
+
+                          {/* Render Product Images */}
+                          {item.images.map((img, index) => (
+                            <div className="thumbnail modified-thumbnail" key={index}>
+                              <img
+                                className={`thumbnail modified-thumbnail ${selectedThumbnail === index ? 'active-thumbnail' : ''
+                                  }`}
+                                src={`${SERVER_API_URL}/${img}`}
+                                alt={`ImageItem ${product_id + index + 1}`}
+                                onMouseEnter={() => {
+                                  setSelectedThumbnail(index);
+                                  handleImageClick(`${SERVER_API_URL}/${img}`)
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </>
+                      )}
+                    </div>
+
+                    {/* Next Button */}
+                    <button
+                      onClick={() => scroll('right')}
+                      className="scroll-btn-thumb next-btn-thumb"
+                    >
+                      <MdKeyboardArrowRight size={25} />
+                    </button>
+                  </div>
+                  {/* ====== EndProduct ====== */}
+                </div>
+
+
+                {/* price container */}
+                <div className="price-product-card mobile-view">
+                  <h1 className="price">₹{product_price}/-</h1>
+                  <p className="shipping-info">
+                    Get <strong>Fast, Free Shipping</strong> with
+                  </p>
+                  {mapDisplayAddress && (
+                    <>
+                      <p className="location" onClick={handleOpenGoogleMap}><IoMdLocate size={22} style={{ paddingTop: "10px" }} /> Delivering to {mapDisplayAddress}</p>
+                      <a onClick={handleOpenGoogleMap} className="update-location">- location</a>
+                    </>
+                  )}
+
+                  <p className="stock">In Stock</p>
+                  <div className='quntity-container'>
+                    <label className="quantity-label">Quantity:</label>
+                    {/* <button className='add-power-cart' onClick={handlePowerClick}
+                                        disabled={!selectedColor} // Disable if selectedColor is null
+                                        style={{ opacity: !selectedColor ? 0.7 : 1, cursor: !selectedColor ? "not-allowed" : "pointer" }}>Add power</button> */}
+                  </div>
+
+                  <select
+                    className="quantity-dropdown"
+                    value={productQuntity}
+                    onChange={(e) => setProductQuntity(Number(e.target.value))}
+                  >
+                    {[...Array(6)].map((_, index) => (
+                      <option key={index + 1} value={index + 1}>
+                        {index + 1}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button className="add-to-cart" onClick={handleAddCart}>Add to Cart</button>
+                  <button className="buy-now" onClick={handleDirectPayment}
+                    disabled={!selectedColor} // Disable if selectedColor is null
+                    style={{ opacity: !selectedColor ? 0.5 : 1, cursor: !selectedColor ? "not-allowed" : "pointer" }}>Buy Now</button>
+
+                  <p className="seller-info">Ships from <strong>Softgenics Ind. Pvt. Ltd.</strong></p>
+                  <p className="sold-by">Sold by <a href="#">SOJOS Vision</a></p>
+                  <p className="returns">Returns <a href="#">30-day refund / replacement</a></p>
+                  <p className="payment">Payment <a href="#">Secure transaction</a></p>
+                </div>
+
+
+                {/* end price container */}
+
+                {/* Product Info Section */}
+                <div className="product-info-section">
+                  <h1 className="product-title">{item?.product_name} Stylish </h1>
+                  <h3 className="product-title">{item?.product_variant}</h3>
+                  <div className="rating-container" onClick={() => scrollToSection(rattingAndReview)}>
+                    <span className="rating-value">4.4</span>
+                    <div className="stars">
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStarHalfAlt className="star" />
+                    </div>
+                    <span className="dropdown-icon">▼</span>
+                    <a href="#" className="ratings-link">45 ratings</a>
+                  </div>
+
+
+
+                  {/* card info */}
+                  <div className=''>
+                    <div className="container">
+                      <h3 className="color-title">
+                        {selectedColor && (
+                          <p>
+                            <strong className='selected-text'>
+                              product color:{"  "}
+                              <span
+                                className="selected-color"
+                                style={{ backgroundColor: selectedColor.frameColor }}
+                              />
+                            </strong>
+                            <br />
+                          </p>
+                        )}
+
+                      </h3>
+                      <div className="grid-container-product-details">
+                        {getColorsForProduct(item?.same_color_type, item?.main_category).length > 0 ? (
+                          getColorsForProduct(item?.same_color_type, item?.main_category).map((colorObj) => (
+
+                            <Link to={`/product-item/${colorObj.main_category}/${colorObj.productId}`}>
+                              <div
+                                key={colorObj.productId}
+                                className={`product-card-product-details ${selectedId === colorObj.productId ? "selected" : ""}`}
+                                // onClick={() => setSelectedId(colorObj.productId)}
+                                onClick={() => {
+                                  handleColorSelect(colorObj.color, colorObj.color);
+                                  setSelectedId(colorObj.productId);
+                                }}
+                              >
+                                <img src={`${SERVER_API_URL}/${colorObj.thumbnail_url}`} alt="Sunglasses" className="product-image" />
+                                <div className="product-info">
+                                  <p className='product-title' style={{ marginBottom: "6px", fontSize: "10px" }}>{colorObj?.description?.slice(0, 40) || "N/A"}..</p>
+
+                                  <div className="product-discount" style={{ height: "30px" }}>
+                                    <p className="discount-title" style={{ fontSize: "10px" }}>₹{colorObj.price}</p>
+                                    <span className="discount-off" style={{ fontSize: "10px" }}>({colorObj.discount_percent}% OFF)<span className='out-of-stock' style={{ color: "#e8a617", textTransform: "uppercase", fontSize: "6px" }}>For {colorObj.sub_category}</span></span>
+                                  </div>
+                                  <p className="product-price1">
+                                    ₹{(colorObj.price - (colorObj.price * colorObj.discount_percent / 100)).toFixed(0)}/-
+                                  </p>
+
+                                </div>
+                              </div>
+                            </Link>
+                          ))
+                        ) : (
+                          <span>No Colors Available</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="technical-details">
+                    <h3>Technical Details</h3>
+                    <ul>
+
+                      {/* ---------------- EYEWEAR ONLY ---------------- */}
+                      {item?.main_category.toLowerCase() === "eyewear" && (
+                        <>
+                          <li>
+                            <strong>Product ID:</strong> DCM{item?.product_id}
+                          </li>
+
+                          {item?.frame_type && (
+                            <li>
+                              <strong>Frame Type:</strong> {item.frame_type}
+                            </li>
+                          )}
+
+
+                          {item?.lens_type && (
+                            <li>
+                              <strong>Lens Type:</strong> {item.lens_type}
+                            </li>
+                          )}
+
+                        </>
+                      )}
+
+                      {/* ---------------- CLOTHINGS ONLY ---------------- */}
+                      {item?.main_category === "clothings" && (
+                        <>
+                          <li><strong>Product ID:</strong> DCM{item?.product_id}</li>
+
+                          {item?.size && (
+                            <li><strong>Size:</strong> [{item?.size.join(", ")}]</li>
+                          )}
+
+                          {item?.fabric_type && (
+                            <li><strong>Fabric Type:</strong> {item?.fabric_type}</li>
+                          )}
+                        </>
+                      )}
+
+                      {/* ---------------- JEWELLERY ONLY ---------------- */}
+                      {item?.main_category.toLowerCase() === "jewellery" && (
+                        <>
+                          <li><strong>Product ID:</strong> DCM{item?.product_id}</li>
+
+                          {item?.weight && (
+                            <li><strong>Weight:</strong> {item?.weight}</li>
+                          )}
+
+                          {item?.stone_type && (
+                            <li><strong>Stone Type:</strong> {item?.stone_type}</li>
+                          )}
+                        </>
+                      )}
+
+                      {/* ---------------- PURSE ONLY ---------------- */}
+                      {item?.main_category === "purse" && (
+                        <>
+                          <li><strong>Product ID:</strong> DCM{item?.product_id}</li>
+
+                          {item?.size_type && (
+                            <li><strong>Size Type:</strong> {item?.size_type}</li>
+                          )}
+
+                          {item?.pattern_type && (
+                            <li><strong>Pattern Type:</strong> {item?.pattern_type}</li>
+                          )}
+                        </>
+                      )}
+
+
+                      {/* ---------------- FOOTWEAR ONLY ---------------- */}
+                      {item?.main_category === "footwear" && (
+                        <>
+                          <li><strong>Product ID:</strong> DCM{item?.product_id}</li>
+
+                          {item?.heel_height && (
+                            <li><strong>Heel Height:</strong> {item?.heel_height}</li>
+                          )}
+
+                          {item?.closure_type && (
+                            <li><strong>Closure Type:</strong> {item?.closure_type}</li>
+                          )}
+                        </>
+                      )}
+
+
+                      {/* Show the remaining list items only when "See All" is clicked */}
+                      {showAll && (
+                        <div className="custom-modal-overlay">
+                          <div className="custom-modal-container">
+                            <button onClick={() => setShowAll(false)} className="custom-close-btn">&times;</button>
+                            <h1 class="product-details-heading">Product Details</h1>
+
+                            <div className='custom-modal-row-container'>
+                              <img
+                                className="custom-modal-image"
+                                src={selectedImage ? selectedImage : `${SERVER_API_URL}/${item?.thumbnail_url}`}
+                                alt="Large Product"
+                              />
+                              <ul className="custom-details-list">
+                                <li><strong>Product Code:</strong> MB{item?.product_id} </li>
+                                <li><strong>Product Price:</strong>
+                                  ₹{item?.product_price - (item?.result?.product_price * item?.result?.discount / 100).toFixed(0)}/-
+                                </li>
+                                <li><strong>Discount:</strong> {item?.discount}%</li>
+                                <li><strong>Frame Shape:</strong> {item?.frame_shape}</li>
+                                <li><strong>Frame Type:</strong> {item?.frem_type}</li>
+                                <li><strong>Frame Clolor:</strong> {item?.frameColor}</li>
+                                <li><strong>Lens Clolor:</strong>{item?.lenshColor}</li>
+                                <li><strong>Gender:</strong>{item?.gender}</li>
+                                <li><strong>Product Title:</strong> {item?.product_title}</li>
+                                <li><strong>Frame Highligths:</strong> {item?.highlights}</li>
+                                <li><strong>Frame Material:</strong> {item?.frameMaterial}</li>
+                                <li><strong>Lens Frame Desc.:</strong> {item?.frameDescription}</li>
+                                <li><strong>Lens Information:</strong> {item?.lensInformation}</li>
+
+                              </ul>
+                            </div>
+
+                          </div>
+                        </div>
+                      )}
+
+                    </ul>
+
+
+                    {/* Show "See All" button if more than 3 details */}
+                    <button
+                      className="see-all-btn"
+                      onClick={() => setShowAll(!showAll)}
+                    >
+                      {showAll ? "See Less" : "See All"}
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Men-Image Section */}
+              <div className='customer-image-container'>
+                <img className='men-image' src={men_image} alt='men-image' />
+                <img className='men-image' src={men_image} alt='men-image' />
+                <img className='men-image' src={men_image} alt='men-image' />
+              </div>
+
+              <div className='customer-image-container2'>
+                <img className='men-image' src={men_image2} alt='men-image' />
+                <img className='men-image' src={men_image2} alt='men-image' />
+                <img className='men-image' src={men_image2} alt='men-image' />
+              </div>
+
+              {/* Customer Suggested Section */}
+              <div className="suggested-frames">
+                <h2>Suggested Frames</h2>
+                <div className="frames-row">
+                  {suggProd?.length > 0 ? (
+                    suggProd.map((frame) => (
+                      <div key={frame.product_id} className="frame-card">
+                        <Link
+                          to={`/product-item/${frame.main_category}/${frame.product_id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <div className="frame-image">
+                            {frame.thumbnail_url ? (
+                              <img className='suggested-frame-image' src={`${SERVER_API_URL}/${frame.thumbnail_url}`} alt={frame.product_id} />
+                            ) : (
+                              <div className="no-image">Image Not Available</div>
+                            )}
+                          </div>
+                        </Link>
+                        <h3>{frame.product_title || "Unnamed Product"}</h3>
+
+                        <div className="product-discount">
+                          <p className="discount-title">₹{frame.price}</p>
+                          <span className="discount-off">({frame.discount_percent}% OFF)<span className='out-of-stock' style={{ color: "#e8a617", textTransform: "uppercase", fontSize: "9px" }}>For {frame.sub_category}</span></span>
+                        </div>
+                        <p className="product-price1">
+                          ₹{(frame.price - (frame.price * frame.discount_percent / 100)).toFixed(0)}/-
+                        </p>
+
+                        <p style={{ marginBottom: "8px" }}>{frame.product_name || "N/A"}</p>
+
+                        <p>Material: {frame.material_type || "fiber"}</p>
+
+                      </div>
+                    ))
+                  ) : (
+                    <p>No products match the selected criteria.</p>
+                  )}
+                </div>
+
+              </div>
+
+
+              {/* Eyewear Power Popup Section */}
+              {showPowerPopup && (
+                <div className="power-popup">
+                  <div className="popup-header">
+                    <h3>Select Lens Type</h3>
+                    <button className="close-btn" onClick={handlePowerClick}>✕</button>
+                  </div>
+                  {showPopupContainer && (
+                    <div className="popup-content">
+                      <div className="lens-option" onClick={() => handleLanseClick('Plano')}>
+                        <div className="icon">👓</div>
+                        <div className="lens-info">
+                          <h4>Plano</h4>
+                          <p>Block 98% of harmful rays (Anti-glare and blue-cut options)</p>
+                        </div>
+                        <div className="arrow">➔</div>
+                      </div>
+                      <div className="lens-option" onClick={() => handleLanseClick('SingleVision')}>
+                        <div className="icon">👓</div>
+                        <div className="lens-info">
+                          <h4>Single Vision</h4>
+                          <p>For distance or near vision (Thin, anti-glare, blue-cut options)</p>
+                        </div>
+                        <div className="arrow">➔</div>
+                      </div>
+                      <div className="lens-option" onClick={() => handleLanseClick('Bifocal')}>
+                        <div className="icon">👓</div>
+                        <div className="lens-info">
+                          <h4>Bifocal</h4>
+                          <p>Bifocal and Progressives (For two powers in the same lenses)</p>
+                        </div>
+                        <div className="arrow">➔</div>
+                      </div>
+
+                      <div className="lens-option" onClick={() => handleLanseClick('Progressive')}>
+                        <div className="icon">👓</div>
+                        <div className="lens-info">
+                          <h4>Progressive</h4>
+                          <p>For Distance or Near Vision (Green, Grey, Brown)</p>
+                        </div>
+                        <div className="arrow">➔</div>
+                      </div>
+                      <div className="lens-option">
+                        <div className="icon">👓</div>
+                        <div className="lens-info">
+                          <h4>Frame Only</h4>
+                          <p>Buy Only Frame</p>
+                        </div>
+                        <div className="arrow">➔</div>
+                      </div>
+
+                      <div className="footer-info">
+                        <p>Not sure what to select? Call 9999899998</p>
+                      </div>
+                      <div className="price-info-popup">
+                        <p>Sub Total</p>
+                        <p>₹{product_price}</p>
+                      </div>
+                    </div>
+                  )}
+                  {showPopuplensePrice && (
+                    <div className="popup-content">
+                      {lensData[selectLansType]?.map((lensOption, index) => (
+                        <div key={index} className="lens-option" onClick={() => showPawerPopup(lensOption.type, lensOption.price)}>
+                          <div className="icon">👓</div>
+                          <div className="lens-info">
+                            <h4>{lensOption.type}</h4>
+                            <p>{lensOption.price}</p>
+                          </div>
+                          <div className="arrow">➔</div>
+                        </div>
+                      ))}
+                      <div className="price-info-popup">
+                        <p>Sub Total</p>
+                        <p>₹{product_price}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {!showPopuplensePrice && !showPopupContainer && (<>
+                    <div className="power-bg-container">
+                      <div className="lens-pricing-container">
+                        <h1 className="pricing-title">What About Eye Power?</h1>
+                        <p className="pricing-description">
+                          You can select your eye power in the following table. Charges may be different from lens to lens based on the lens number.
+                        </p>
+
+                        <div className="lens-selection-table">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th>Left Lens</th>
+                                <th>Right Lens</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>SPH</td>
+                                <td>
+                                  <select
+                                    value={leftLens.SPH}
+                                    onChange={(e) => handleLensChange('left', 'SPH', e.target.value)}
+                                    className="lens-select"
+                                  >
+                                    {Array.from({ length: 81 }, (_, index) => {
+                                      const value = (-10 + index * 0.25).toFixed(2);
+                                      return <option key={value} value={value}>{value}</option>;
+                                    })}
+                                  </select>
+                                </td>
+                                <td>
+                                  <select
+                                    value={rightLens.SPH}
+                                    onChange={(e) => handleLensChange('right', 'SPH', e.target.value)}
+                                    className="lens-select"
+                                  >
+                                    {Array.from({ length: 81 }, (_, index) => {
+                                      const value = (-10 + index * 0.25).toFixed(2);
+                                      return <option key={value} value={value}>{value}</option>;
+                                    })}
+                                  </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>CYL</td>
+                                <td>
+                                  <select
+                                    value={leftLens.CYL}
+                                    onChange={(e) => handleLensChange('left', 'CYL', e.target.value)}
+                                    className="lens-select"
+                                  >
+                                    {Array.from({ length: 81 }, (_, index) => {
+                                      const value = (-6 + index * 0.25).toFixed(2);
+                                      return <option key={value} value={value}>{value}</option>;
+                                    })}
+                                  </select>
+                                </td>
+                                <td>
+                                  <select
+                                    value={rightLens.CYL}
+                                    onChange={(e) => handleLensChange('right', 'CYL', e.target.value)}
+                                    className="lens-select"
+                                  >
+                                    {Array.from({ length: 81 }, (_, index) => {
+                                      const value = (-6 + index * 0.25).toFixed(2);
+                                      return <option key={value} value={value}>{value}</option>;
+                                    })}
+                                  </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>AXIS</td>
+                                <td colSpan="2">
+                                  <input
+                                    type="number"
+                                    value={axis}
+                                    onChange={(e) => handleChangeAxis('AXIS', e.target.value)}
+                                    className="add-input"
+                                    placeholder='Enter Axis'
+                                  />
+                                </td>
+
+                              </tr>
+                              <tr>
+                                <td>ADD</td>
+                                <td colSpan="2">
+                                  <input
+                                    type="number"
+                                    value={add}
+                                    onChange={(e) => handleChangeAdd('ADD', e.target.value)}
+                                    className="add-input"
+                                    placeholder='Enter Add'
+                                  />
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Image Upload */}
+                        <div className="prescription-image-upload-group">
+
+                          <label className="prescription-image-upload-label">
+                            Prescription Image<span>*</span>
+                          </label>
+
+                          <label
+                            htmlFor="prescription-product-image"
+                            className="prescription-image-upload-box"
+                          >
+                            {prescriptionPreview ? (
+                              <img
+                                src={prescriptionPreview}
+                                alt="Product preview"
+                                className="prescription-image-preview"
+                              />
+                            ) : (
+                              <div className="prescription-image-upload-content">
+
+                                <div className="prescription-image-upload-icon">
+                                  📷
+                                </div>
+
+                                <h3> Upload Prescription Image</h3>
+
+                                <p>Click here to select an image</p>
+
+                                <small>  JPG, PNG or WEBP </small>
+
+                              </div>
+                            )}
+                          </label>
+
+                          <input
+                            id="prescription-product-image"
+                            type="file"
+                            accept="image/*"
+                            onChange={(handleImageChange)}
+                            hidden
+                          />
+                        </div>
+
+                      </div>
+                    </div>
+                    <button className='submit-lens-details' type='button' onClick={handleAddCart}>submit</button>
+
+                    <div className="price-info-popup">
+                      <p>{`Sub Total: product_price ${product_price} + Lens ${selectedLens.price}= ₹${product_price + selectedLens.price}/-`}</p>
+
+                    </div>
+                  </>
+                  )}
+
+                </div>
+              )}
+            </div>
+
+            <div className='product-details-child-rigth'>
+              <div className="price-product-card destop-view">
+                <h1 className="price"> ₹{acceptedPrice !== null ? acceptedPrice.toFixed(0) : Number(product_price).toFixed(0)}/-</h1>
+                <p className="shipping-info">
+                  Get <strong>Fast, Free Shipping</strong> with
+                </p>
+                {mapDisplayAddress && (
+                  <>
+                    <p className="location" onClick={handleOpenGoogleMap}><IoMdLocate size={22} style={{ paddingTop: "10px" }} /> Delivering to {mapDisplayAddress}</p>
+                    <a onClick={handleOpenGoogleMap} className="update-location">- location</a>
+                  </>
+                )}
+
+                <p className="stock" style={{ marginLeft: "5px" }}>In Stock1</p>
+
+                {getPowerDetails(product_id)?.length > 0 &&
+                  getPowerDetails(product_id).map((power) => (
+                    <>
+                      <div
+                        key={power.cart_id}
+                        className="power-details"
+                      >
+                        <p>
+                          <strong>Lens Type:</strong>{" "}
+                          {power.lens_type}
+                        </p>
+
+                        <p>
+                          <strong>Lens Name:</strong>{" "}
+                          {power.lens_name}
+                        </p>
+
+                        <p>
+                          <strong>Left SPH:</strong>{" "}
+                          {power.left_sph}
+                        </p>
+
+                        <p>
+                          <strong>Left CYL:</strong>{" "}
+                          {power.left_cyl}
+                        </p>
+
+                        <p>
+                          <strong>Right SPH:</strong>{" "}
+                          {power.right_sph}
+                        </p>
+
+                        <p>
+                          <strong>Right CYL:</strong>{" "}
+                          {power.right_cyl}
+                        </p>
+
+                        <p>
+                          <strong>Axis:</strong>{" "}
+                          {power.axis}
+                        </p>
+
+                        <p>
+                          <strong>Add:</strong>{" "}
+                          {power.add}
+                        </p>
+
+                        <p>
+                          <strong>Lens Price: </strong>{"  "}
+                          ₹{power.price - product_price.toFixed(0)}/-
+                        </p>
+
+                      </div>
+                      {power.prescription && (
+                        <>
+                          <span className="prescription-label">
+                            Your Prescription:
+                          </span>
+                          <br />
+                          <div className="prescription-file-box">
+
+                            <FaFolderOpen className="prescription-folder-icon" />
+
+                            <FaFileImage className="prescription-file-icon" />
+
+                            <span className="prescription-file-name">
+                              {power.prescription}
+                            </span>
+
+                          </div>
+                        </>
+                      )}
+                    </>
+                  ))
+                }
+
+                <div className='quntity-container'>
+                  <label className="quantity-label">Quantity:</label>
+
+                  {item?.power && (
+                    <button className='add-power-cart' onClick={handlePowerClick}
+                      disabled={!selectedColor} // Disable if selectedColor is null
+                      style={{ opacity: !selectedColor ? 0.7 : 1, cursor: !selectedColor ? "not-allowed" : "pointer" }}>Add power</button>
+                  )}
+
+                </div>
+
+                <select
+                  className="quantity-dropdown"
+                  value={productQuntity}
+                  onChange={(e) => setProductQuntity(Number(e.target.value))}
+                >
+                  {[...Array(6)].map((_, index) => (
+                    <option key={index + 1} value={index + 1}>
+                      {index + 1}
+                    </option>
+                  ))}
+                </select>
+
+                <button className="add-to-cart" onClick={handleAddCart}>Add to Cart</button>
+                <button className="buy-now" onClick={handleDirectPayment}>Buy Now </button>
+
+                {/* BARGAIN BUTTON */}
+                <button
+                  type="button"
+                  className="buy-now bargain-btn"
+                  onClick={() => setShowBargain(true)}
+                >
+                  <MdLocalOffer />
+                  Bargain
+                </button>
+
+
+                <p className="seller-info">Ships from <strong>Softgenics Ind. Pvt. Ltd.</strong></p>
+                <p className="sold-by">Sold by <a href="#">SOJOS Vision</a></p>
+                <p className="returns">Returns <a href="#">30-day refund / replacement</a></p>
+                <p className="payment">Payment <a href="#">Secure transaction</a></p>
+
+              </div>
+
+              {/* Compare to Other Website */}
+              {(item?.Flipkart_btn_name ||
+                item?.Amazon_btn_name) && (
+
+                  <div className="compare-section">
+
+                    <h2 className="compare-title"> Compare to Other Websites </h2>
+
+                    <div className="compare-row">
+
+                      {item?.Flipkart_btn_name && (
+                        <Link
+                          to={item.Flipkart}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="compare-website"
+                        >
+                          <div className="compare-content">
+
+                            <div className="compare-icon">
+                              <i className="fa-solid fa-store"></i>
+                            </div>
+
+                            <div className="compare-info">
+                              <strong>
+                                {item.Flipkart_btn_name}
+                              </strong>
+                            </div>
+
+                          </div>
+
+                          <span className="compare-arrow">
+                            ↗
+                          </span>
+                        </Link>
+                      )}
+
+                      {item?.Amazon_btn_name && (
+                        <Link
+                          to={item.Amazon}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="compare-website"
+                        >
+                          <div className="compare-content">
+
+                            <div className="compare-icon">
+                              <i className="fa-solid fa-store"></i>
+                            </div>
+
+                            <div className="compare-info">
+                              <strong>
+                                {item.Amazon_btn_name}
+                              </strong>
+                            </div>
+
+                          </div>
+
+                          <span className="compare-arrow">
+                            ↗
+                          </span>
+                        </Link>
+                      )}
+
+                    </div>
+
+                  </div>
+                )}
+
+
+              {/* youtube container */}
+              <div className='youtube-main-container'>
+                <iframe
+                  width="100%"
+                  height="315"
+                  src="https://www.youtube.com/embed/2VptJdqr_0o?autoplay=1&mute=1"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+
+              {/* https://www.youtube.com/shorts/0B-wiEkX8Uc */}
+              <div className='youtube-main-container'>
+                <iframe
+                  width="100%"
+                  height="315"
+                  src="https://www.youtube.com/embed/0B-wiEkX8Uc?autoplay=1&mute=1"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* customer-reviews */}
+          <div className="customer-reviews destop-view" ref={rattingAndReview}>
+            <h2>Customer Reviews & Ratings</h2>
+            <p>
+              4.0 <span style={{ color: "#FCBF02" }}>★★★★</span> 45 reviews
+            </p>
+
+            <div className="reviews-swiper-wrapper">
+              <button className="review-nav-btn prev-review-btn">‹</button>
+
+              <Swiper
+                spaceBetween={20}
+                slidesPerView={5} // Force 4 cards visible
+                pagination={{ clickable: true }}
+                autoplay={{ delay: 2000, disableOnInteraction: false }}
+                loop={true}
+                modules={[Navigation, Pagination, Autoplay]}
+                navigation={{
+                  nextEl: ".next-review-btn",
+                  prevEl: ".prev-review-btn",
+                }}
+              >
+                {reviews.map((review) => (
+                  <SwiperSlide key={review.id}>
+                    <div className="review-card">
+                      <p style={{ color: "#00B4C5" }}>{review.comment}</p>
+                      <p style={{ color: "#FCBF02" }}>{"★".repeat(review.rating)}</p>
+                      <p>{review.user} - {review.date}</p>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+
+              <button className="review-nav-btn next-review-btn">›</button>
+            </div>
+          </div>
+
+          <FaqPage />
+
+          {/* stock display < 5 */}
+          <div className="low-stock-container destop-view">
+            <Swiper
+              spaceBetween={10}
+              slidesPerView={3} // Show 3 items at a time
+              navigation
+              pagination={{ clickable: true }}
+              autoplay={{ delay: 2000, disableOnInteraction: false }}
+              loop={true}
+              modules={[Navigation, Pagination, Autoplay]}
+              breakpoints={{
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+                1280: { slidesPerView: 4 }
+              }}
+            >
+              {allProducts?.result?.length > 0 &&
+                allProducts.result
+                  .filter(frame => frame.count_in_stock > 0 && frame.count_in_stock < 7)
+                  .map((frame) => (
+                    <SwiperSlide key={frame.id}>
+                      <div className="low-stock-card">
+                        <Link
+                          to={`/product-item/${frame.product_id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <div className="low-stock-image">
+                            {frame.product_thumnail_img ? (
+                              <img
+                                src={`${SERVER_API_URL}/${frame.product_thumnail_img}`}
+                                alt={frame.name}
+                                className="product-thumbnail"
+                              />
+                            ) : (
+                              <div className="no-image">Image Not Available</div>
+                            )}
+                          </div>
+                        </Link>
+                        <h3 className="product-title">{frame.product_title || "Unnamed Product"}</h3>
+
+                        <div className="product-discount-info">
+                          <p className="original-price">₹{frame.product_price}</p>
+                          <span className="discount-percentage">
+                            ({frame.discount}% OFF)
+                            <span className='stock-warning'>
+                              For {frame.gender}
+                            </span>
+                          </span>
+                        </div>
+                        <p className="final-price">
+                          ₹{(frame.product_price - (frame.product_price * frame.discount / 100)).toFixed(0)}/-
+                        </p>
+                        <p className="product-description">{frame.highlights || "N/A"}</p>
+                        <p className="product-material">Material: {frame.material || "fiber"}</p>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+            </Swiper>
+          </div>
+          <Footer />
+
+        </div>
+      )}
+
+      {showBargain && (
+        <div
+          className="bargain-overlay"
+          onClick={() => setShowBargain(false)}
+        >
+          <div
+            className="bargain-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="bargain-close"
+              onClick={() => setShowBargain(false)}
+            >
+              ×
+            </button>
+
+            <div className="bargain-icon">
+              <MdLocalOffer />
+            </div>
+
+            <h2>Make Your Offer</h2>
+
+            <p>
+              Enter the price you want to pay.
+              We will check your offer instantly.
+            </p>
+
+            <div className="offer-input-box">
+              <span>₹</span>
+
+              <input
+                type="number"
+                value={offerPrice}
+                placeholder="Enter your offer"
+                onChange={(e) =>
+                  setOfferPrice(e.target.value)
+                }
+              />
+            </div>
+
+
+            <button type="button"
+              className="submit-offer"
+              onClick={checkBargainOffer} disabled={bargainLoading} > {bargainLoading ? "Checking..." : "Check Offer"} {!bargainLoading && (<i className="fas fa-arrow-right"></i>)}
+            </button>
+
+            {bargainMessage && (
+              <div
+                className={`bargain-result ${bargainResult?.result === "accepted"
+                  ? "accepted"
+                  : bargainResult?.result === "counter"
+                    ? "counter"
+                    : bargainResult?.result === "limit_reached"
+                      ? "limit-reached"
+                      : "rejected"
+                  }`}
+              >
+                <p>{bargainMessage}</p>
+
+                {bargainResult?.result === "accepted" && (
+                  <strong>
+                    Final Price: ₹{acceptedPrice}
+                  </strong>
+                )}
+
+                {bargainResult?.attempts_left !== undefined && (
+                  <div className="attempt-left">
+                    Attempts Left:
+                    <b>
+                      {bargainResult.attempts_left}
+                    </b>
+                  </div>
+                )}
+
+                {bargainResult?.result === "limit_reached" && (
+                  <strong>
+                    No bargain attempts left
+                  </strong>
+                )}
+              </div>
+            )}
+
+            <small>
+              <i className="fas fa-shield-alt"></i>
+              Your offer will be checked securely
+            </small>
+          </div>
+        </div>
+      )}
+
+    </>
+
+  );
+};
+
+export default ProductDetails;

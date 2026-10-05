@@ -1,0 +1,700 @@
+/* ===============================
+   TRACKING PAGE
+==================================*/
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:#f1f3f6;
+}
+
+.tracking-page{
+  width:95%;
+  max-width:1400px;
+  margin:35px auto;
+}
+
+/* ===============================
+ SUCCESS MESSAGE
+==================================*/
+
+.success-banner{
+  background:#e8f5e9;
+  color:#2e7d32;
+  border-left:6px solid #2e7d32;
+  padding:18px 24px;
+  border-radius:10px;
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:25px;
+}
+
+/* ===============================
+ PRODUCT CARD
+==================================*/
+
+.order-card{
+  background:#fff;
+  border-radius:18px;
+  padding:30px;
+  display:flex;
+  gap:35px;
+  align-items:center;
+  margin-bottom:30px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  transition:.35s;
+}
+
+.order-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 45px rgba(0,0,0,.12);
+}
+
+/* Product Image */
+
+.order-image{
+  width:240px;
+  height:240px;
+  object-fit:contain;
+  background:#fafafa;
+  border-radius:16px;
+  padding:20px;
+  border:1px solid #ececec;
+  transition:.4s;
+}
+
+.order-image:hover{
+  transform:scale(1.05);
+}
+
+/* ===============================
+ PRODUCT INFO
+==================================*/
+
+.order-info{
+  flex:1;
+}
+
+.order-info h2{
+  font-size:30px;
+  color:#222;
+  margin-bottom:15px;
+  line-height:42px;
+}
+
+.price{
+  font-size:34px;
+  font-weight:700;
+  color:#388e3c;
+  margin-bottom:22px;
+}
+
+.order-info p{
+  display:flex;
+  margin:12px 0;
+  font-size:16px;
+  color:#444;
+}
+
+.order-info strong{
+  width:180px;
+  color:#111;
+  font-weight:600;
+}
+
+/* ===============================
+ STATUS BADGES
+==================================*/
+
+.status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 18px;
+  border-radius:25px;
+  font-size:14px;
+  font-weight:600;
+}
+
+.status.pending{
+  background:#fff8e1;
+  color:#ff9800;
+}
+
+.status.shipped{
+  background:#e3f2fd;
+  color:#1976d2;
+}
+
+.status.delivered{
+  background:#e8f5e9;
+  color:#2e7d32;
+}
+
+/* ===============================
+ SHIPMENT CARD
+==================================*/
+
+.shipment-card{
+  background:#fff;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  margin-bottom:35px;
+}
+
+.shipment-card h2{
+  font-size:28px;
+  margin-bottom:30px;
+  color:#222;
+}
+
+.shipment-details{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+}
+
+.shipment-details div{
+  background:#fafafa;
+  border-radius:14px;
+  padding:22px;
+  border:1px solid #eee;
+  transition:.35s;
+  cursor:pointer;
+}
+
+.shipment-details div:hover{
+  transform:translateY(-5px);
+  box-shadow:0 15px 30px rgba(0,0,0,.10);
+}
+
+.shipment-details span{
+  display:block;
+  font-size:13px;
+  color:#777;
+  margin-bottom:10px;
+}
+
+.shipment-details h4{
+  font-size:20px;
+  color:#111;
+  word-break:break-word;
+}
+
+/* ==========================================
+   TRACKING PROGRESS
+==========================================*/
+
+.tracking-progress{
+  background:#fff;
+  padding:45px 30px;
+  border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  position:relative;
+  margin-top:30px;
+  overflow:hidden;
+}
+
+/* Line */
+
+.line{
+  flex:1;
+  height:4px;
+  background:#d8d8d8;
+  margin:20px -5px 0 -5px;
+  border-radius:10px;
+  transition:.35s;
+}
+
+.line.active{
+  background:#2e7d32;
+}
+
+/* Each Step */
+
+.tracking-step{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:160px;
+  z-index:2;
+}
+
+/* Circle */
+
+.circle{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  border:3px solid #cfcfcf;
+  background:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:18px;
+  font-weight:bold;
+  color:#fff;
+  transition:.35s;
+  margin-top: 20px;
+}
+
+/* Active Circle */
+
+.circle.active{
+  background:#2e7d32;
+  border-color:#2e7d32;
+}
+
+/* Text */
+
+.tracking-step p{
+  margin-top:15px;
+  text-align:center;
+  font-size:15px;
+  color:#333;
+  font-weight:600;
+  line-height:22px;
+}
+
+/* ==========================================
+ TRACK LIVE BUTTON
+==========================================*/
+
+.track-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:28px;
+  padding:14px 30px;
+  background:#2874f0;
+  color:#fff;
+  text-decoration:none;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:600;
+  transition:.35s;
+}
+
+.track-btn:hover{
+  background:#1557c0;
+  transform:translateY(-2px);
+  box-shadow:0 12px 25px rgba(40,116,240,.30);
+}
+
+/* ==========================================
+ COURIER BADGE
+==========================================*/
+
+.courier-name{
+  display:inline-flex;
+  align-items:center;
+  background:#eef5ff;
+  color:#1565c0;
+  padding:8px 18px;
+  border-radius:25px;
+  font-size:14px;
+  font-weight:600;
+  margin-top:10px;
+}
+
+/* ==========================================
+ STATUS CODE BOX
+==========================================*/
+
+.status-box{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:140px;
+  padding:10px 18px;
+  border-radius:30px;
+  background:#f5f5f5;
+  font-weight:600;
+  color:#444;
+}
+
+/* ==========================================
+ ORDER INFO SPACING
+==========================================*/
+
+.order-info p{
+  padding:6px 0;
+  border-bottom:1px dashed #ececec;
+}
+
+.order-info p:last-child{
+  border-bottom:none;
+}
+
+/* ==========================================
+ CARD ANIMATION
+==========================================*/
+
+.order-card,
+.shipment-card,
+.tracking-progress{
+  animation:fadeUp .5s ease;
+}
+
+@keyframes fadeUp{
+
+  from{
+      opacity:0;
+      transform:translateY(25px);
+  }
+
+  to{
+      opacity:1;
+      transform:translateY(0);
+  }
+
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+==========================================*/
+
+@media (max-width:1200px){
+
+  .tracking-page{
+      width:96%;
+  }
+
+  .order-card{
+      gap:25px;
+      padding:25px;
+  }
+
+  .order-image{
+      width:200px;
+      height:200px;
+  }
+
+  .order-info h2{
+      font-size:26px;
+  }
+
+  .price{
+      font-size:30px;
+  }
+
+  .shipment-details{
+      grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+/* ==========================================
+ TABLET
+==========================================*/
+
+@media (max-width:992px){
+
+  .order-card{
+      flex-direction:column;
+      align-items:flex-start;
+  }
+
+  .order-image{
+      width:100%;
+      height:280px;
+  }
+
+  .order-info{
+      width:100%;
+  }
+
+  .order-info p{
+      display:flex;
+      justify-content:space-between;
+      gap:20px;
+      flex-wrap:wrap;
+  }
+
+  .shipment-details{
+      grid-template-columns:1fr;
+  }
+
+  .tracking-progress{
+      overflow-x:auto;
+      justify-content:flex-start;
+      gap:40px;
+      padding-bottom:20px;
+  }
+
+  .tracking-step{
+      min-width:150px;
+  }
+
+  .line{
+      min-width:80px;
+      margin-top:20px;
+  }
+
+}
+
+/* ==========================================
+ MOBILE
+==========================================*/
+
+@media (max-width:768px){
+
+  .circle{
+    margin-top: 0;
+  }
+
+  .tracking-page{
+      width:95%;
+      margin:20px auto;
+  }
+
+  .success-banner{
+      font-size:15px;
+      padding:15px;
+  }
+
+  .order-card,
+  .shipment-card,
+  .tracking-progress{
+      padding:18px;
+      border-radius:14px;
+  }
+
+  .order-image{
+      width:100%;
+      height:220px;
+  }
+
+  .order-info h2{
+      font-size:22px;
+      line-height:30px;
+  }
+
+  .price{
+      font-size:28px;
+  }
+
+  .order-info strong{
+      width:140px;
+  }
+
+  .shipment-card h2{
+      font-size:22px;
+  }
+
+  .shipment-details h4{
+      font-size:17px;
+  }
+
+  .tracking-step{
+      min-width:120px;
+  }
+
+  .circle{
+      width:36px;
+      height:36px;
+      font-size:16px;
+  }
+
+  .tracking-step p{
+      font-size:13px;
+      line-height:18px;
+  }
+
+  .track-btn{
+      width:100%;
+      text-align:center;
+  }
+
+}
+
+/* ==========================================
+ SMALL MOBILE
+==========================================*/
+
+@media (max-width:480px){
+
+  .order-card{
+      padding:15px;
+  }
+
+  .order-image{
+      height:180px;
+  }
+
+  .order-info h2{
+      font-size:20px;
+  }
+
+  .price{
+      font-size:24px;
+  }
+
+  .order-info p{
+      flex-direction:column;
+      gap:4px;
+      font-size:14px;
+  }
+
+  .order-info strong{
+      width:auto;
+  }
+
+  .shipment-details div{
+      padding:16px;
+  }
+
+  .shipment-card h2{
+      font-size:20px;
+  }
+
+  .tracking-progress{
+      gap:25px;
+  }
+
+  .tracking-step{
+      min-width:100px;
+  }
+
+  .circle{
+      width:32px;
+      height:32px;
+      font-size:14px;
+  }
+
+  .line{
+      min-width:60px;
+  }
+
+}
+
+/* ==========================================
+ SCROLLBAR
+==========================================*/
+
+::-webkit-scrollbar{
+  width:8px;
+  height:8px;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#c5c5c5;
+  border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+  background:#999;
+}
+
+::-webkit-scrollbar-track{
+  background:#f5f5f5;
+}
+
+/* ==========================================
+ PREMIUM EFFECTS
+==========================================*/
+
+.order-card:hover,
+.shipment-card:hover,
+.tracking-progress:hover{
+
+  box-shadow:
+  0 18px 45px rgba(0,0,0,.10);
+
+}
+
+.circle.active{
+
+  box-shadow:
+  0 0 0 6px rgba(46,125,50,.12);
+
+}
+
+.track-btn:active{
+
+  transform:scale(.97);
+
+}
+
+.order-image{
+
+  background:
+  linear-gradient(135deg,#fafafa,#ffffff);
+
+}
+
+.shipment-details div{
+
+  background:
+  linear-gradient(180deg,#ffffff,#fafafa);
+
+}
+
+@keyframes blinkCircle {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 12px rgba(255, 152, 0, 0);
+    opacity: .8;
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 152, 0, 0);
+    opacity: 1;
+  }
+}
+
+.circle.blink{
+  background:#ff9800;
+  border-color:#ff9800;
+  color:#fff;
+  animation:blinkCircle 1.2s infinite;
+}
+
+.loading-cointainer-details{
+  min-height:70vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  gap:12px;
+}
+
+.loader-center{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+  margin-top:20px;
+}
+
+.tracking-date{
+  display:block;
+  margin-top:6px;
+  font-size:12px;
+  color:#888;
+  text-align:center;
+  line-height:18px;
+}
+
+.circle.failed {
+  background: #ef4444;
+  color: #fff;
+  animation: blink 1s infinite;
+}
